@@ -1,0 +1,5 @@
+# comment
+
+files = [ src.src log.log ypp.ypp lpp.lpp hpp.hpp cpp.cpp Makefile rc.rc ]
+touch @ files
+

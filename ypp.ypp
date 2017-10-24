@@ -1,0 +1,26 @@
+%{
+#include "hpp.hpp"
+%}
+%defines %union { Sym*o; }
+%token EOL					// end of line
+%token <o> SYM				// primitive: symbol
+%token <o> LQ RQ			// bracket: []
+%token <o> EQ AT			// operator: = @ 
+%type <o> ex vector			// expression [vec tor]
+
+%right EQ
+%left AT
+%%
+REPL : | REPL EOL
+REPL : REPL ex EOL	{ cout << $2->dump() << endl;
+					  cout << "------------------------------------"; 
+					  cout << $2->eval(global)->dump() << endl;
+					  cout << "------------------------------------"; 
+					  cout << global->dump() << endl;
+					  cout << "====================================" << endl; }
+ex : SYM
+ex : ex EQ ex		{ $$=$2; $$->push($1); $$->push($3); }
+ex : ex AT ex		{ $$=$2; $$->push($1); $$->push($3); }
+ex : LQ vector RQ	{ $$=$2; }
+vector: 			{ $$=new Vector(); }
+vector: vector ex	{ $$=$1; $$->push($2); }

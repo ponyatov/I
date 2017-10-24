@@ -1,0 +1,18 @@
+%{
+#include "hpp.hpp"
+%}
+%option noyywrap yylineno
+%%
+#[^\n]*			{}						// comment
+
+\[				TOC(Op,LQ)				// bracket
+\]				TOC(Op,RQ)
+
+\=				TOC(Op,EQ)				// operator
+\@				TOC(Op,AT)
+
+[a-zA-Z0-9_.]+	TOC(Sym,SYM)			// symbol
+
+\n				{return EOL;}			// end of line
+[ \t\r]+		{}						// drop spaces
+.				{yyerror("lexer");}		// undetected char
