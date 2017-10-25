@@ -41,11 +41,11 @@ struct Hex:Sym { Hex(string);				// hex bitstring
 struct Int:Sym { Int(string); 				// integer
 	long val; Int(long);
 	string head();
-	Sym* pfxadd(); Sym* pfxsub(); };
+	Sym* pfxadd(Sym*op); Sym* pfxsub(Sym*op); };
 struct Num:Sym { Num(string); 				// number
 	double val; Num(double);
 	string head();
-	Sym* pfxadd(); Sym* pfxsub(); };
+	Sym* pfxadd(Sym*op); Sym* pfxsub(Sym*op); };
 
 struct Str:Sym { Str(string);				// 'string'
 	string head(); };

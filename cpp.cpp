@@ -35,17 +35,17 @@ Sym* Sym::eval(Sym*E) {
 		(*it) = (*it)->eval(E);							// MEMORY LEAK !
 	return this; }
 
-Sym* Sym::pfxadd() { return new Error("+ "+head()); }
-Sym* Sym::pfxsub() { return new Error("- "+head()); }
+Sym* Sym::pfxadd(Sym*op) { return op; }
+Sym* Sym::pfxsub(Sym*op) { return op; }
 
-Sym* Sym::add(Sym*o) { return new Error(head() + " + " + o->head()); }
-Sym* Sym::mul(Sym*o) { return new Error(head() + " * " + o->head()); }
+Sym* Sym::add(Sym*op,Sym*o) { return op; }
+Sym* Sym::mul(Sym*op,Sym*o) { return op; }
 
-Sym* Sym::eq(Sym*o, Sym*E) {
+Sym* Sym::eq(Sym*op,Sym*o, Sym*E) {
 	E->attr[val] = o;
 	return o; }
 
-Sym* Sym::at(Sym*o) { return eval(o); }
+Sym* Sym::at(Sym*op,Sym*o) { return eval(o); }
 
 Error::Error(string V):Sym("error",V) { yyerror(V); }
 
@@ -57,15 +57,15 @@ Int::Int(string V):Sym("int",V) { val=atoi(V.c_str()); }
 Int::Int(long D):Sym("int","") { val=D; }
 string Int::head() { ostringstream os;
 	os << "<" << tag <<":"<< val << "> @"<<this; return os.str(); }
-Sym* Int::pfxadd() { return new Int(+val); }
-Sym* Int::pfxsub() { return new Int(-val); }
+Sym* Int::pfxadd(Sym*op) { return new Int(+val); }
+Sym* Int::pfxsub(Sym*op) { return new Int(-val); }
 
 Num::Num(string V):Sym("num",V) { val=atof(V.c_str()); }
 Num::Num(double D):Sym("num","") { val=D; }
 string Num::head() { ostringstream os;
 	os << "<" << tag <<":"<< val << "> @"<<this; return os.str(); }
-Sym* Num::pfxadd() { return new Num(+val); }
-Sym* Num::pfxsub() { return new Num(-val); }
+Sym* Num::pfxadd(Sym*op) { return new Num(+val); }
+Sym* Num::pfxsub(Sym*op) { return new Num(-val); }
 
 Str::Str(string V):Sym("str",V){}
 string Str::head() { ostringstream os;
@@ -76,13 +76,13 @@ Op::Op(string V):Sym("op",V){}
 Sym* Op::eval(Sym*E) { Sym::eval(E);
 	switch (nest.size()) {
 		case 1:
-			if (val=="+") return nest[0]->pfxadd();
-			if (val=="-") return nest[0]->pfxsub();
+			if (val=="+") return nest[0]->pfxadd(this);
+			if (val=="-") return nest[0]->pfxsub(this);
 		case 2:
-			if (val=="+") return nest[0]->add(nest[1]);
+			if (val=="+") return nest[0]->add(this,nest[1]);
 			if (val=="*") return nest[0]->mul(this,nest[1]);
-			if (val=="=") return nest[0]->eq(nest[1],E);
-			if (val=="@") return nest[0]->at(nest[1]);
+			if (val=="=") return nest[0]->eq(this,nest[1],E);
+			if (val=="@") return nest[0]->at(this,nest[1]);
 	}
 	return this; }
 
