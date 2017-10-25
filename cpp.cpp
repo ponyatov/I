@@ -30,28 +30,65 @@ string Sym::dump(int depth) {
 Sym* Sym::eval(Sym*E) {
 	if (E->attr.count(val)) return E->attr[val];
 	for (auto it=nest.begin(),e=nest.end();it!=e;it++)
-		(*it) = (*it)->eval(E);
+		(*it) = (*it)->eval(E);							// MEMORY LEAK !
 	return this; }
 
 Sym* Sym::eq(Sym*o, Sym*E) {
 	E->attr[val] = o;
 	return o; }
 
+Hex::Hex(string V):Sym("hex",V) { val=strtoul(V.substr(2).c_str(),NULL,0x10); }
+string Hex::head() { ostringstream os;
+	os <<"0x"<< hex << uppercase << val << " @"<<this; return os.str(); }
+
+Int::Int(string V):Sym("int",V) { val=atoi(V.c_str()); }
+Int::Int(long D):Sym("int","") { val=D; }
+string Int::head() { ostringstream os;
+	os << "<" << tag <<":"<< val << "> @"<<this; return os.str(); }
+Sym* Int::pfxadd() { return new Int(+val); }
+Sym* Int::pfxsub() { return new Int(-val); }
+
+Num::Num(string V):Sym("num",V) { val=atof(V.c_str()); }
+Num::Num(double D):Sym("num","") { val=D; }
+string Num::head() { ostringstream os;
+	os << "<" << tag <<":"<< val << "> @"<<this; return os.str(); }
+Sym* Num::pfxadd() { return new Num(+val); }
+Sym* Num::pfxsub() { return new Num(-val); }
+
+Str::Str(string V):Sym("str",V){}
+string Str::head() { ostringstream os;
+	os << "'" << val << "' @"<<this; return os.str(); }
+
 Op::Op(string V):Sym("op",V){}
 
 Sym* Op::eval(Sym*E) { Sym::eval(E);
-	if (val=="=") return nest[0]->eq(nest[1],E);
+	switch (nest.size()) {
+		case 1:
+			if (val=="+") return nest[0]->pfxadd();
+			if (val=="-") return nest[0]->pfxsub();
+		case 2:
+			if (val=="=") return nest[0]->eq(nest[1],E);
+	}
 	return this; }
+
+Sym* Sym::pfxadd() { return new Error("+ "+head()); }
+Sym* Sym::pfxsub() { return new Error("- "+head()); }
+
+Error::Error(string V):Sym("error",V) { yyerror(V); }
 
 Vector::Vector():Sym("vector","[]"){}
 string Vector::head() { ostringstream os;
 	os << "[] @"<<this; return os.str(); }
 
-Env::Env(string V):Sym("env",V){}
+Map::Map():Sym("map","{}"){}
+string Map::head() { ostringstream os;
+	os << "{} @"<<this; return os.str(); }
+
+	Env::Env(string V):Sym("env",V){}
 Env* global = new Env("global");
 void env_init() { global->attr["global"]=global;
-	global->attr["MODULE"] = new Sym(MODULE);
-	global->attr["TITLE"] = new Sym(TITLE);
-	global->attr["AUTHOR"] = new Sym(AUTHOR);
-	global->attr["GITHUB"] = new Sym(GITHUB);
+	global->attr["MODULE"] = new Str(MODULE);
+	global->attr["TITLE"] = new Str(TITLE);
+	global->attr["AUTHOR"] = new Str(AUTHOR);
+	global->attr["GITHUB"] = new Str(GITHUB);
 }

@@ -2,14 +2,19 @@
 #include "hpp.hpp"
 %}
 %defines %union { Sym*o; }
-%token EOL					// end of line
-%token <o> SYM				// primitive: symbol
-%token <o> LQ RQ			// bracket: []
-%token <o> EQ AT			// operator: = @ 
-%type <o> ex vector			// expression [vec tor]
+%token EOL						// end of line
+%token <o> SYM NUM STR			// primitive: symbol number 'string'
+%token <o> LP RP LQ RQ LC RC	// bracket: () [] {}
+%token <o> EQ AT				// operator: = @ 
+%token <o> ADD SUB MUL DIV POW	// operator: + - * / ^
+%type <o> ex vector map			// expression [vec tor] {map}
 
 %right EQ
 %left AT
+%left ADD SUB
+%left MUL DIV
+%left POW
+%left PFX
 %%
 REPL : | REPL EOL
 REPL : REPL ex EOL	{ cout << $2->dump() << endl;
@@ -18,9 +23,29 @@ REPL : REPL ex EOL	{ cout << $2->dump() << endl;
 					  cout << "------------------------------------"; 
 					  cout << global->dump() << endl;
 					  cout << "====================================" << endl; }
-ex : SYM
-ex : ex EQ ex		{ $$=$2; $$->push($1); $$->push($3); }
-ex : ex AT ex		{ $$=$2; $$->push($1); $$->push($3); }
-ex : LQ vector RQ	{ $$=$2; }
-vector: 			{ $$=new Vector(); }
-vector: vector ex	{ $$=$1; $$->push($2); }
+ex : SYM | NUM | STR 
+
+ex : ADD ex %prec PFX	{ $$=$1; $$->push($2); }
+ex : SUB ex	%prec PFX	{ $$=$1; $$->push($2); }
+ex : ex ADD ex			{ $$=$2; $$->push($1); $$->push($3); }
+ex : ex SUB ex			{ $$=$2; $$->push($1); $$->push($3); }
+ex : ex MUL ex			{ $$=$2; $$->push($1); $$->push($3); }
+ex : ex DIV ex			{ $$=$2; $$->push($1); $$->push($3); }
+ex : ex POW ex			{ $$=$2; $$->push($1); $$->push($3); }
+
+ex : ex EQ ex			{ $$=$2; $$->push($1); $$->push($3); }
+ex : ex AT ex			{ $$=$2; $$->push($1); $$->push($3); }
+
+ex : LP ex RP			{ $$=$2; }
+
+ex : LQ vector RQ		{ $$=$2; }
+vector: 				{ $$=new Vector(); }
+vector: vector EOL		{ $$=$1; }
+vector: vector ex		{ $$=$1; $$->push($2); }
+
+ex : LC map RC			{ $$=$2; }
+map:					{ $$=new Map(); }
+map: map EOL			{ $$=$1; }
+map: map SYM EQ ex		{ $$=$1; $$->attr[$2->val]=$4->eval(global); }
+map: map ex				{ $$=$1; $$->push($2); }
+
