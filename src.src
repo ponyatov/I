@@ -16,7 +16,7 @@ touch @ files
 primitive = {
     symbols = [ sym bols ]
     numbers = {
-        hex = 0xDEADBEEF 
+        hex = 0xDeadBeef
         integer = -01
         number = [ +2.3 ; -04e+05 ]
     }

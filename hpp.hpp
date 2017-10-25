@@ -53,7 +53,7 @@ struct Op:Sym { Op(string); 				// operator
 struct Vector:Sym { Vector(); 				// [vector]
 	string head(); };
 struct Dict:Sym { Dict(); 					// {dict}
-	string head(); };
+	string head(); Sym* eval(Sym*); };
 
 extern int yylex();							// lexer/parser interface
 extern char* yytext;

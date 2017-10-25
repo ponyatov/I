@@ -85,10 +85,14 @@ string Vector::head() { ostringstream os;
 Dict::Dict():Sym("dict","{}"){}
 string Dict::head() { ostringstream os;
 	os << "{} @"<<this; return os.str(); }
+Sym* Dict::eval(Sym*E) { Sym::eval(this); Sym::eval(E); return this; }
 
 	Env::Env(string V):Sym("env",V){}
 Env* global = new Env("global");
-void env_init() { global->attr["global"]=global;
+void env_init() {
+	global->attr["global"] = global;
+	global->attr["doc"] = new Str("global environment");
+	// metainfo
 	global->attr["MODULE"] = new Str(MODULE);
 	global->attr["TITLE"] = new Str(TITLE);
 	global->attr["AUTHOR"] = new Str(AUTHOR);
