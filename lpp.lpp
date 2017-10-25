@@ -9,7 +9,7 @@ N [0-9]+
 
 %x str doc
 %%
-#[^\n]*			{}						// comment
+#[^\n]*			{}								// comment
 
 '				{BEGIN(str); LexString="";}
 <str>'			{BEGIN(INITIAL); yylval.o = new Str(LexString); return STR; }
@@ -19,30 +19,31 @@ N [0-9]+
 <doc>\"			{BEGIN(INITIAL); yylval.o = new Str(LexString); return DOC; }
 <doc>.			{LexString+=yytext;}
 
-0x[0-9a-fA-F]+				TOC(Hex,NUM)
-{N}							TOC(Int,NUM)
-{N}(\.{N})?([eE]{S}{N})?	TOC(Num,NUM)
+0x[0-9a-fA-F]+				TOC(Hex,NUM)		// hex
+{N}							TOC(Int,NUM)		// integer
+{N}(\.{N})?([eE]{S}{N})?	TOC(Num,NUM)		// floating point number
 
-\(				TOC(Op,LP)				// bracket
-\)				TOC(Op,RP)
-\[				TOC(Op,LQ)
-\]				TOC(Op,RQ)
-\{				TOC(Op,LC)
-\}				TOC(Op,RC)
+\(							TOC(Op,LP)			// bracket
+\)							TOC(Op,RP)
+\[							TOC(Op,LQ)
+\]							TOC(Op,RQ)
+\{							TOC(Op,LC)
+\}							TOC(Op,RC)
 
-\+				TOC(Op,ADD)				// operator
-\-				TOC(Op,SUB)
-\*				TOC(Op,MUL)
-\/				TOC(Op,DIV)
-\^				TOC(Op,POW)
+\+							TOC(Op,ADD)			// operator
+\-							TOC(Op,SUB)
+\*							TOC(Op,MUL)
+\/							TOC(Op,DIV)
+\^							TOC(Op,POW)
 
-\=				TOC(Op,EQ)
-\@				TOC(Op,AT)
+\=							TOC(Op,EQ)
+\@							TOC(Op,AT)
+\:							TOC(Op,COLON)
 
-[a-zA-Z0-9_.]+	TOC(Sym,SYM)			// symbol
+[a-zA-Z0-9_.]+				TOC(Sym,SYM)		// symbol
 
-\n				{return EOL;}			// end of line
-\;				{return EOL;}			// ; delimiter
+\n							{return EOL;}		// end of line
+\;							{return EOL;}		// ; delimiter
 
-[ \t\r]+		{}						// drop spaces
-.				{yyerror("lexer");}		// undetected char
+[ \t\r]+					{}					// drop spaces
+.							{yyerror("lexer");}	// undetected char

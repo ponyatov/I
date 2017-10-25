@@ -23,3 +23,5 @@ primitive = {
     'string'
 }
 
+quad = { X: X*X }	" function sample "
+

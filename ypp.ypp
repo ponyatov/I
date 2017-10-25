@@ -5,7 +5,7 @@
 %token EOL						// end of line
 %token <o> SYM NUM STR DOC		// primitive: symbol number 'string' "doc"
 %token <o> LP RP LQ RQ LC RC	// bracket: () [] {}
-%token <o> EQ AT				// operator: = @ 
+%token <o> EQ AT COLON			// operator: = @ :
 %token <o> ADD SUB MUL DIV POW	// operator: + - * / ^
 %type <o> ex vector map			// expression [vec tor] {map}
 
@@ -46,6 +46,7 @@ vector: vector ex		{ $$=$1; $$->push($2); }
 ex : LC map RC			{ $$=$2; }
 map:					{ $$=new Map(); }
 map: map EOL			{ $$=$1; }
+map: map SYM COLON		{ $$=$1; $$->attr[$2->val]=$2; }
 map: map SYM EQ ex		{ $$=$1; $$->attr[$2->val]=$4; }
 map: map ex				{ $$=$1; $$->push($2); }
 
