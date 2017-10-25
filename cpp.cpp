@@ -82,8 +82,8 @@ Vector::Vector():Sym("vector","[]"){}
 string Vector::head() { ostringstream os;
 	os << "[] @"<<this; return os.str(); }
 
-Map::Map():Sym("map","{}"){}
-string Map::head() { ostringstream os;
+Dict::Dict():Sym("dict","{}"){}
+string Dict::head() { ostringstream os;
 	os << "{} @"<<this; return os.str(); }
 
 	Env::Env(string V):Sym("env",V){}

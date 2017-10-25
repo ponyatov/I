@@ -7,7 +7,7 @@
 %token <o> LP RP LQ RQ LC RC	// bracket: () [] {}
 %token <o> EQ AT COLON			// operator: = @ :
 %token <o> ADD SUB MUL DIV POW	// operator: + - * / ^
-%type <o> ex vector map			// expression [vec tor] {map}
+%type <o> ex vector dict		// expression [vec tor] {dict}
 
 %right EQ
 %left AT
@@ -43,12 +43,12 @@ vector: 				{ $$=new Vector(); }
 vector: vector EOL		{ $$=$1; }
 vector: vector ex		{ $$=$1; $$->push($2); }
 
-ex : LC map RC			{ $$=$2; }
-map:					{ $$=new Map(); }
-map: map EOL			{ $$=$1; }
-map: map SYM COLON		{ $$=$1; $$->attr[$2->val]=$2; }
-map: map SYM EQ ex		{ $$=$1; $$->attr[$2->val]=$4; }
-map: map ex				{ $$=$1; $$->push($2); }
+ex : LC dict RC			{ $$=$2; }
+dict:					{ $$=new Dict(); }
+dict: dict EOL			{ $$=$1; }
+dict: dict SYM COLON	{ $$=$1; $$->attr[$2->val]=$2; }
+dict: dict SYM EQ ex	{ $$=$1; $$->attr[$2->val]=$4; }
+dict: dict ex			{ $$=$1; $$->push($2); }
 
 ex : ex DOC				{ $$=$1; $$->attr["doc"]=$2; }
 

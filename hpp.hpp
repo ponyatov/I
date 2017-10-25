@@ -52,7 +52,7 @@ struct Op:Sym { Op(string); 				// operator
 
 struct Vector:Sym { Vector(); 				// [vector]
 	string head(); };
-struct Map:Sym { Map(); 					// {map}
+struct Dict:Sym { Dict(); 					// {dict}
 	string head(); };
 
 extern int yylex();							// lexer/parser interface
