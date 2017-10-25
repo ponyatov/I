@@ -10,6 +10,6 @@ primitive = {
         integer = -01
         number = [ +2.3 ; -04e+05 ]
     }
-#    'string'
+    'string'
 }
 

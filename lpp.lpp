@@ -1,12 +1,19 @@
 %{
 #include "hpp.hpp"
+string LexString;
 %}
 %option noyywrap yylineno
 
 S [\+\-]?
 N [0-9]+
+
+%x str
 %%
 #[^\n]*			{}						// comment
+
+'				{BEGIN(str); LexString="";}
+<str>'			{BEGIN(INITIAL); yylval.o = new Str(LexString); return STR; }
+<str>.			{LexString+=yytext;}
 
 0x[0-9a-fA-F]+				TOC(Hex,NUM)
 {N}							TOC(Int,NUM)
