@@ -3,7 +3,7 @@
 %}
 %defines %union { Sym*o; }
 %token EOL						// end of line
-%token <o> SYM NUM STR			// primitive: symbol number 'string'
+%token <o> SYM NUM STR DOC		// primitive: symbol number 'string' "doc"
 %token <o> LP RP LQ RQ LC RC	// bracket: () [] {}
 %token <o> EQ AT				// operator: = @ 
 %token <o> ADD SUB MUL DIV POW	// operator: + - * / ^
@@ -48,4 +48,6 @@ map:					{ $$=new Map(); }
 map: map EOL			{ $$=$1; }
 map: map SYM EQ ex		{ $$=$1; $$->attr[$2->val]=$4; }
 map: map ex				{ $$=$1; $$->push($2); }
+
+ex : ex DOC				{ $$=$1; $$->attr["doc"]=$2; }
 

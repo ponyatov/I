@@ -7,13 +7,17 @@ string LexString;
 S [\+\-]?
 N [0-9]+
 
-%x str
+%x str doc
 %%
 #[^\n]*			{}						// comment
 
 '				{BEGIN(str); LexString="";}
 <str>'			{BEGIN(INITIAL); yylval.o = new Str(LexString); return STR; }
 <str>.			{LexString+=yytext;}
+
+\"				{BEGIN(doc); LexString="";}
+<doc>\"			{BEGIN(INITIAL); yylval.o = new Str(LexString); return DOC; }
+<doc>.			{LexString+=yytext;}
 
 0x[0-9a-fA-F]+				TOC(Hex,NUM)
 {N}							TOC(Int,NUM)

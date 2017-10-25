@@ -10,4 +10,5 @@ syntax match Keyword	"\v(sym|int|hex|num|op|vector|env|global):"
 syntax match Comment	"\v\@0x[0-9a-f]+"
 
 syntax region String	start="'" end="'"
+syntax region Comment	start="\"" end="\""
 

@@ -1,6 +1,16 @@
 # comment
 
-files = [ src.src log.log ypp.ypp lpp.lpp hpp.hpp cpp.cpp Makefile rc.rc ]
+files = {
+	src.src log.log
+	core  = [
+		ypp.ypp		" syntax parser "
+		lpp.lpp		" lexer "
+		hpp.hpp		" headers "
+		cpp.cpp		" Dynamic Language Runtime "
+		Makefile	" build script "
+	]
+	gvim = [ rc.rc bat.bat ]	" (g)vim helpers "
+}
 touch @ files
 
 primitive = {
