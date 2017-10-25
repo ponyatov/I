@@ -46,6 +46,6 @@ vector: vector ex		{ $$=$1; $$->push($2); }
 ex : LC map RC			{ $$=$2; }
 map:					{ $$=new Map(); }
 map: map EOL			{ $$=$1; }
-map: map SYM EQ ex		{ $$=$1; $$->attr[$2->val]=$4->eval(global); }
+map: map SYM EQ ex		{ $$=$1; $$->attr[$2->val]=$4; }
 map: map ex				{ $$=$1; $$->push($2); }
 

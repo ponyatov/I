@@ -29,6 +29,8 @@ string Sym::dump(int depth) {
 
 Sym* Sym::eval(Sym*E) {
 	if (E->attr.count(val)) return E->attr[val];
+	for (auto it=attr.begin(),e=attr.end();it!=e;it++)
+		attr[it->first] = it->second->eval(E);
 	for (auto it=nest.begin(),e=nest.end();it!=e;it++)
 		(*it) = (*it)->eval(E);							// MEMORY LEAK !
 	return this; }
