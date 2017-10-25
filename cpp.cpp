@@ -35,9 +35,19 @@ Sym* Sym::eval(Sym*E) {
 		(*it) = (*it)->eval(E);							// MEMORY LEAK !
 	return this; }
 
+Sym* Sym::pfxadd() { return new Error("+ "+head()); }
+Sym* Sym::pfxsub() { return new Error("- "+head()); }
+
+Sym* Sym::add(Sym*o) { return new Error(head() + " + " + o->head()); }
+Sym* Sym::mul(Sym*o) { return new Error(head() + " * " + o->head()); }
+
 Sym* Sym::eq(Sym*o, Sym*E) {
 	E->attr[val] = o;
 	return o; }
+
+Sym* Sym::at(Sym*o) { return eval(o); }
+
+Error::Error(string V):Sym("error",V) { yyerror(V); }
 
 Hex::Hex(string V):Sym("hex",V) { val=strtoul(V.substr(2).c_str(),NULL,0x10); }
 string Hex::head() { ostringstream os;
@@ -69,14 +79,12 @@ Sym* Op::eval(Sym*E) { Sym::eval(E);
 			if (val=="+") return nest[0]->pfxadd();
 			if (val=="-") return nest[0]->pfxsub();
 		case 2:
+			if (val=="+") return nest[0]->add(nest[1]);
+			if (val=="*") return nest[0]->mul(this,nest[1]);
 			if (val=="=") return nest[0]->eq(nest[1],E);
+			if (val=="@") return nest[0]->at(nest[1]);
 	}
 	return this; }
-
-Sym* Sym::pfxadd() { return new Error("+ "+head()); }
-Sym* Sym::pfxsub() { return new Error("- "+head()); }
-
-Error::Error(string V):Sym("error",V) { yyerror(V); }
 
 Vector::Vector():Sym("vector","[]"){}
 string Vector::head() { ostringstream os;

@@ -25,3 +25,5 @@ primitive = {
 
 quad = { X: X*X }	" function sample "
 
+quad @ {X=2}
+

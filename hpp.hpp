@@ -22,9 +22,12 @@ struct Sym {
 	virtual string dump(int=0);				// \ dump
 	virtual string head();					// /
 	virtual Sym* eval(Sym*);				// eval()uate/compute element
-	virtual Sym* eq(Sym*B,Sym*E);			// A = B
-	virtual Sym* pfxadd();					// +A
-	virtual Sym* pfxsub();					// -A
+	virtual Sym* eq(Sym*op,Sym*B,Sym*E);	// A = B in E context
+	virtual Sym* at(Sym*op,Sym*B);			// A @ B
+	virtual Sym* pfxadd(Sym*op);			// +A
+	virtual Sym* pfxsub(Sym*op);			// -A
+	virtual Sym* add(Sym*op,Sym*B);			// A + B
+	virtual Sym* mul(Sym*op,Sym*B);			// A * B
 };
 
 struct Env:Sym { Env(string); };			// environment (symbol table)
